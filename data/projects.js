@@ -32,11 +32,11 @@ window.PROJECTS = [
     slug: "city-game",
     title: "City Game",
     description: "A 2d Isometric City-builder created in Unity, with assistance from Claude Code",
-    tags: ["canvas", "generative"],
+    tags: ["demo", "generative"],
     thumbnail: "",
     live: "projects/city-game/",
     cta: "Play",
-    repo: "https://github.com/jpm20000/City-Game",
+    repo: "https://github.com/jpm20000/City-Game/play",
     featured: true,
     status: "Prototype"
   },
