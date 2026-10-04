@@ -147,7 +147,7 @@
       <div class="box">
         <h2>Game build not found</h2>
         <p>
-          No Unity WebGL build was found at <code id="err-loader">Build/city-game.loader.js</code>.
+          No Unity WebGL build was found at <code id="err-loader">Build/Chronopolis web.loader.js</code>.
         </p>
         <p>
           Export your game from Unity (Build Settings &rarr; WebGL) into this
@@ -155,17 +155,23 @@
           <code>TemplateData/</code> / <code>StreamingAssets/</code> folders), then reload.
         </p>
         <p>
-          The expected build name is <code>city-game</code>. If yours is named differently,
-          open this file and update the <code>BUILD_NAME</code> value to match.
+          The expected build name is <code>Chronopolis web</code>. If yours is named differently,
+          open this file and update the <code>BUILD_NAME</code> value to match. For compressed
+          builds set <code>COMPRESSION</code> to <code>"br"</code> (Brotli) or <code>"gz"</code>
+          (gzip), or <code>""</code> if the build is uncompressed.
         </p>
       </div>
     </div>
   </div>
 
   <script>
-    var BUILD_NAME = "city-game";
+    var BUILD_NAME = "Chronopolis web";
     var BUILD_DIR = "Build";
+    var COMPRESSION = "br"; // "" for an uncompressed build, or "br"/"gz" for a compressed one
 
+    // These URLs deliberately have NO compression extension. If we point the loader at a
+    // ".br" file it will try its own decompression; instead we fetch the compressed bytes
+    // ourselves and hand back already-decompressed responses under these clean names.
     var loaderUrl = BUILD_DIR + "/" + BUILD_NAME + ".loader.js";
     var config = {
       dataUrl: BUILD_DIR + "/" + BUILD_NAME + ".data",
@@ -196,9 +202,44 @@
 
     loadingBar.style.display = "flex";
 
-    var script = document.createElement("script");
-    script.src = loaderUrl;
-    script.onload = function () {
+    // GitHub Pages can't send Content-Encoding, so a Brotli/gzip compressed Unity build
+    // can't be served as-is. We pre-fetch the compressed payloads, decompress them with a
+    // vendored decoder (vendor/brotli_dec.*), and expose the results as blob: URLs so the
+    // Unity loader receives plain uncompressed files (script tag, fetch, wasm, etc.).
+    function blobUrl(bytes, mime) {
+      return URL.createObjectURL(new Blob([bytes], { type: mime }));
+    }
+
+    function fetchAndDecompress(mod, url, mime) {
+      return fetch(url).then(function (response) {
+        if (!response.ok) throw new Error("Failed to fetch " + url + " (" + response.status + ")");
+        return response.arrayBuffer();
+      }).then(function (ab) {
+        return blobUrl(mod.decompress(new Uint8Array(ab)), mime);
+      });
+    }
+
+    function prepareBuild(mod) {
+      var suffix = "." + COMPRESSION;
+      var base = BUILD_DIR + "/" + BUILD_NAME;
+      return Promise.all([
+        fetchAndDecompress(mod, base + ".data" + suffix, "application/octet-stream"),
+        fetchAndDecompress(mod, base + ".framework.js" + suffix, "text/javascript"),
+        fetchAndDecompress(mod, base + ".wasm" + suffix, "application/wasm")
+      ]).then(function (urls) {
+        config.dataUrl = urls[0];
+        config.frameworkUrl = urls[1];
+        config.codeUrl = urls[2];
+      });
+    }
+
+    function loadGame() {
+      document.body.appendChild(loaderScript);
+    }
+
+    var loaderScript = document.createElement("script");
+    loaderScript.src = loaderUrl;
+    loaderScript.onload = function () {
       createUnityInstance(canvas, config, function (progress) {
         var pct = Math.round(progress * 100);
         progressBarFull.style.width = pct + "%";
@@ -214,8 +255,23 @@
         if (window.console) console.error(message);
       });
     };
-    script.onerror = showError;
-    document.body.appendChild(script);
+    loaderScript.onerror = showError;
+
+    if (COMPRESSION) {
+      import("./vendor/brotli_dec.js")
+        .then(function (mod) {
+          return mod.default("./vendor/brotli_dec.wasm").then(function () {
+            return prepareBuild(mod);
+          });
+        })
+        .then(loadGame)
+        .catch(function (err) {
+          showError();
+          if (window.console) console.error("Failed to prepare build:", err);
+        });
+    } else {
+      loadGame();
+    }
   </script>
 </body>
 </html>
