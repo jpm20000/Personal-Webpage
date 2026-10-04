@@ -10,6 +10,7 @@
                  leave "" to show a coloured placeholder with the initial
      live        relative path to the running app, e.g. "projects/my-app/"
                  point at a folder containing index.html; leave "" if none
+     details     optional link for the card title; defaults to `live` if omitted
      cta         optional label for the live button (default "Live demo", e.g. "Play")
      repo        full URL to the source; leave "" if none
      featured    true to also show it in the Featured section
@@ -35,6 +36,7 @@ window.PROJECTS = [
     tags: ["demo", "generative"],
     thumbnail: "",
     live: "projects/city-game/play/",
+    details: "projects/city-game/",
     cta: "Play",
     repo: "https://github.com/jpm20000/City-Game/",
     featured: true,

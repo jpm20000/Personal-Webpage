@@ -53,8 +53,9 @@
 
     var h3 = document.createElement("h3");
     h3.className = "card-title";
-    if (p.live) {
-      h3.appendChild(linkEl(p.live, p.title || p.slug, false));
+    var titleHref = p.details || p.live;
+    if (titleHref) {
+      h3.appendChild(linkEl(titleHref, p.title || p.slug, false));
     } else {
       h3.textContent = p.title || p.slug;
     }
