@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Example App</title>
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      display: grid; place-items: center;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: #0b0e16; color: #e7eaf3;
+      padding: 2rem;
+    }
+    main { max-width: 34rem; text-align: center; }
+    h1 { font-size: 1.8rem; margin: 0 0 0.5rem; }
+    p { color: #949bb4; line-height: 1.6; }
+    .counter {
+      font-size: 3.5rem; font-weight: 800; margin: 1.5rem 0;
+      font-variant-numeric: tabular-nums;
+    }
+    button {
+      font: inherit; font-weight: 600; cursor: pointer;
+      padding: 0.6rem 1.2rem; border-radius: 999px;
+      border: 1px solid #2a2e3e; background: #818cf8; color: #0b0e16;
+    }
+    button:hover { filter: brightness(1.08); }
+    a.back { color: #818cf8; display: inline-block; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Your app goes here</h1>
+    <p>
+      This placeholder proves the live-app pattern. Drop any static build
+      (or hand-written page) into this folder and it is served at
+      <code>/projects/example-app/</code>.
+    </p>
+
+    <div class="counter" id="count">0</div>
+    <button type="button" id="bump">Click me</button>
+
+    <p><a class="back" href="../../index.html">&larr; Back to projects</a></p>
+  </main>
+
+  <script>
+    var n = 0;
+    var out = document.getElementById("count");
+    document.getElementById("bump").addEventListener("click", function () {
+      out.textContent = String(++n);
+    });
+  </script>
+</body>
+</html>
