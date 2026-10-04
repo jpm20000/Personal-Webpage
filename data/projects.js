@@ -28,15 +28,15 @@ window.PROJECTS = [
     status: "active"
   },
   {
-    slug: "flow-field",
-    title: "Flow Field Study",
-    description: "Procedural particle experiments exploring noise-based motion. Coming soon.",
+    slug: "city-game",
+    title: "City Game",
+    description: "A 2d Isometric City-builder created in Unity, with assistance from Claude Code",
     tags: ["canvas", "generative"],
     thumbnail: "",
-    live: "",
-    repo: "",
-    featured: false,
-    status: "wip"
+    live: "projects/city-game/",
+    repo: "https://github.com/jpm20000/City-Game",
+    featured: true,
+    status: "Prototype"
   },
   {
     slug: "automata-lab",

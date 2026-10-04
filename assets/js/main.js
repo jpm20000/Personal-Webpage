@@ -15,7 +15,7 @@
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
   var activeTag = "All";
-  var STATUS_LABELS = { wip: "WIP", archived: "Archived", active: "" };
+  var STATUS_LABELS = { wip: "WIP", prototype: "Prototype", archived: "Archived", active: "" };
 
   function linkEl(href, text, external) {
     var a = document.createElement("a");
@@ -60,7 +60,7 @@
     }
     head.appendChild(h3);
 
-    var statusLabel = p.status ? STATUS_LABELS[p.status] : "";
+    var statusLabel = p.status ? STATUS_LABELS[String(p.status).toLowerCase()] : "";
     if (statusLabel) {
       var badge = document.createElement("span");
       badge.className = "badge";
