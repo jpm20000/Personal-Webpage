@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chronopolis — Play</title>
+  <title>Chronopolis ÔÇö Play</title>
   <style>
     :root { color-scheme: dark; }
     * { box-sizing: border-box; }
@@ -155,10 +155,11 @@
           <code>TemplateData/</code> / <code>StreamingAssets/</code> folders), then reload.
         </p>
         <p>
-          The expected build name is <code>Chronopolis web</code>. If yours is named differently,
-          open this file and update the <code>BUILD_NAME</code> value to match. For compressed
-          builds set <code>COMPRESSION</code> to <code>"br"</code> (Brotli) or <code>"gz"</code>
-          (gzip), or <code>""</code> if the build is uncompressed.
+          The expected build name is <code>Chronopolis web</code>, with
+          <code>.unityweb</code> files. If yours is named differently, open this file and
+          update the <code>BUILD_NAME</code> value to match, and set <code>EXT</code> to
+          <code>".unityweb"</code> (uncompressed build) or <code>".br"</code>/<code>".gz"</code>
+          for a compressed one.
         </p>
       </div>
     </div>
@@ -167,20 +168,17 @@
   <script>
     var BUILD_NAME = "Chronopolis web";
     var BUILD_DIR = "Build";
-    var COMPRESSION = "br"; // "" for an uncompressed build, or "br"/"gz" for a compressed one
+    var EXT = ".unityweb"; // Unity's uncompressed build extension (no server headers needed)
 
-    // These URLs deliberately have NO compression extension. If we point the loader at a
-    // ".br" file it will try its own decompression; instead we fetch the compressed bytes
-    // ourselves and hand back already-decompressed responses under these clean names.
     var loaderUrl = BUILD_DIR + "/" + BUILD_NAME + ".loader.js";
     var config = {
-      dataUrl: BUILD_DIR + "/" + BUILD_NAME + ".data",
-      frameworkUrl: BUILD_DIR + "/" + BUILD_NAME + ".framework.js",
-      codeUrl: BUILD_DIR + "/" + BUILD_NAME + ".wasm",
+      dataUrl: BUILD_DIR + "/" + BUILD_NAME + ".data" + EXT,
+      frameworkUrl: BUILD_DIR + "/" + BUILD_NAME + ".framework.js" + EXT,
+      codeUrl: BUILD_DIR + "/" + BUILD_NAME + ".wasm" + EXT,
       streamingAssetsUrl: "StreamingAssets",
-      companyName: "DefaultCompany",
+      companyName: "J-man Studios",
       productName: "Chronopolis",
-      productVersion: "1.0"
+      productVersion: "1.0.0"
     };
 
     var canvas = document.querySelector("#unity-canvas");
@@ -202,41 +200,6 @@
 
     loadingBar.style.display = "flex";
 
-    // GitHub Pages can't send Content-Encoding, so a Brotli/gzip compressed Unity build
-    // can't be served as-is. We pre-fetch the compressed payloads, decompress them with a
-    // vendored decoder (vendor/brotli_dec.*), and expose the results as blob: URLs so the
-    // Unity loader receives plain uncompressed files (script tag, fetch, wasm, etc.).
-    function blobUrl(bytes, mime) {
-      return URL.createObjectURL(new Blob([bytes], { type: mime }));
-    }
-
-    function fetchAndDecompress(mod, url, mime) {
-      return fetch(url).then(function (response) {
-        if (!response.ok) throw new Error("Failed to fetch " + url + " (" + response.status + ")");
-        return response.arrayBuffer();
-      }).then(function (ab) {
-        return blobUrl(mod.decompress(new Uint8Array(ab)), mime);
-      });
-    }
-
-    function prepareBuild(mod) {
-      var suffix = "." + COMPRESSION;
-      var base = BUILD_DIR + "/" + BUILD_NAME;
-      return Promise.all([
-        fetchAndDecompress(mod, base + ".data" + suffix, "application/octet-stream"),
-        fetchAndDecompress(mod, base + ".framework.js" + suffix, "text/javascript"),
-        fetchAndDecompress(mod, base + ".wasm" + suffix, "application/wasm")
-      ]).then(function (urls) {
-        config.dataUrl = urls[0];
-        config.frameworkUrl = urls[1];
-        config.codeUrl = urls[2];
-      });
-    }
-
-    function loadGame() {
-      document.body.appendChild(loaderScript);
-    }
-
     var loaderScript = document.createElement("script");
     loaderScript.src = loaderUrl;
     loaderScript.onload = function () {
@@ -256,22 +219,7 @@
       });
     };
     loaderScript.onerror = showError;
-
-    if (COMPRESSION) {
-      import("./vendor/brotli_dec.js")
-        .then(function (mod) {
-          return mod.default("./vendor/brotli_dec.wasm").then(function () {
-            return prepareBuild(mod);
-          });
-        })
-        .then(loadGame)
-        .catch(function (err) {
-          showError();
-          if (window.console) console.error("Failed to prepare build:", err);
-        });
-    } else {
-      loadGame();
-    }
+    document.body.appendChild(loaderScript);
   </script>
 </body>
 </html>
