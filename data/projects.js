@@ -10,9 +10,10 @@
                  leave "" to show a coloured placeholder with the initial
      live        relative path to the running app, e.g. "projects/my-app/"
                  point at a folder containing index.html; leave "" if none
+     cta         optional label for the live button (default "Live demo", e.g. "Play")
      repo        full URL to the source; leave "" if none
      featured    true to also show it in the Featured section
-     status      "active" | "wip" | "archived"
+     status      "active" | "wip" | "prototype" | "archived"
    ========================================================================== */
 
 window.PROJECTS = [
@@ -34,6 +35,7 @@ window.PROJECTS = [
     tags: ["canvas", "generative"],
     thumbnail: "",
     live: "projects/city-game/",
+    cta: "Play",
     repo: "https://github.com/jpm20000/City-Game",
     featured: true,
     status: "Prototype"

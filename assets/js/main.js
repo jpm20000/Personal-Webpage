@@ -89,7 +89,7 @@
 
     var links = document.createElement("div");
     links.className = "card-links";
-    if (p.live) links.appendChild(linkEl(p.live, "Live demo", false));
+    if (p.live) links.appendChild(linkEl(p.live, p.cta || "Live demo", false));
     if (p.repo) links.appendChild(linkEl(p.repo, "Source", true));
     if (!p.live && !p.repo) {
       var soon = document.createElement("span");

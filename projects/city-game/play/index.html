@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>City Game — Play</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: #0b0e16;
+      color: #e7eaf3;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header.bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #1c2030;
+      background: rgba(11, 14, 22, 0.9);
+      backdrop-filter: blur(8px);
+    }
+    header.bar .title { font-weight: 700; }
+    header.bar .spacer { margin-left: auto; }
+    header.bar a { color: #818cf8; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+    header.bar a:hover { text-decoration: underline; }
+    header.bar button {
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid #2a2e3e;
+      background: #1a1e2b;
+      color: #e7eaf3;
+    }
+    header.bar button:hover { border-color: #818cf8; }
+    header.bar button:disabled { opacity: 0.5; cursor: default; }
+
+    #game-wrap {
+      position: relative;
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      min-height: 0;
+    }
+    #unity-canvas {
+      width: 100%;
+      max-width: 1280px;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border: 1px solid #1c2030;
+      border-radius: 12px;
+      display: block;
+      outline: none;
+      touch-action: none;
+    }
+
+    #unity-loading-bar {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.9rem;
+      pointer-events: none;
+    }
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 3px solid #2a2e3e;
+      border-top-color: #818cf8;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #unity-progress-bar-empty {
+      width: 260px;
+      max-width: 60vw;
+      height: 6px;
+      border-radius: 999px;
+      background: #1c2030;
+      overflow: hidden;
+    }
+    #unity-progress-bar-full {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #818cf8, #22d3ee);
+      transition: width 0.15s ease;
+    }
+    #unity-progress-text { font-size: 0.85rem; color: #949bb4; font-variant-numeric: tabular-nums; }
+
+    #unity-error {
+      position: absolute;
+      inset: 1rem;
+      display: none;
+      place-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    #unity-error .box {
+      max-width: 40rem;
+      border: 1px solid #2a2e3e;
+      border-radius: 12px;
+      padding: 1.5rem;
+      background: #0f1220;
+    }
+    #unity-error h2 { margin: 0 0 0.5rem; font-size: 1.2rem; }
+    #unity-error p { margin: 0.4rem 0; color: #949bb4; line-height: 1.6; }
+    #unity-error code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: #1a1e2b;
+      padding: 0.1rem 0.35rem;
+      border-radius: 5px;
+      color: #c7d2fe;
+    }
+  </style>
+</head>
+<body>
+  <header class="bar">
+    <a href="../index.html">&larr; Back to project</a>
+    <span class="title">City Game</span>
+    <span class="spacer"></span>
+    <button type="button" id="unity-fullscreen-button" disabled>Fullscreen</button>
+  </header>
+
+  <div id="game-wrap">
+    <canvas id="unity-canvas" width="1280" height="720" tabindex="-1"></canvas>
+
+    <div id="unity-loading-bar">
+      <div class="spinner"></div>
+      <div id="unity-progress-bar-empty"><div id="unity-progress-bar-full"></div></div>
+      <div id="unity-progress-text">Loading 0%</div>
+    </div>
+
+    <div id="unity-error">
+      <div class="box">
+        <h2>Game build not found</h2>
+        <p>
+          No Unity WebGL build was found at <code id="err-loader">Build/city-game.loader.js</code>.
+        </p>
+        <p>
+          Export your game from Unity (Build Settings &rarr; WebGL) into this
+          <code>play/</code> folder so it contains a <code>Build/</code> folder (and any
+          <code>TemplateData/</code> / <code>StreamingAssets/</code> folders), then reload.
+        </p>
+        <p>
+          The expected build name is <code>city-game</code>. If yours is named differently,
+          open this file and update the <code>BUILD_NAME</code> value to match.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var BUILD_NAME = "city-game";
+    var BUILD_DIR = "Build";
+
+    var loaderUrl = BUILD_DIR + "/" + BUILD_NAME + ".loader.js";
+    var config = {
+      dataUrl: BUILD_DIR + "/" + BUILD_NAME + ".data",
+      frameworkUrl: BUILD_DIR + "/" + BUILD_NAME + ".framework.js",
+      codeUrl: BUILD_DIR + "/" + BUILD_NAME + ".wasm",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "DefaultCompany",
+      productName: "City Game",
+      productVersion: "1.0"
+    };
+
+    var canvas = document.querySelector("#unity-canvas");
+    var loadingBar = document.querySelector("#unity-loading-bar");
+    var progressBarFull = document.querySelector("#unity-progress-bar-full");
+    var progressText = document.querySelector("#unity-progress-text");
+    var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+    var errorBox = document.querySelector("#unity-error");
+    document.querySelector("#err-loader").textContent = loaderUrl;
+
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      config.devicePixelRatio = 1;
+    }
+
+    function showError() {
+      loadingBar.style.display = "none";
+      errorBox.style.display = "grid";
+    }
+
+    loadingBar.style.display = "flex";
+
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = function () {
+      createUnityInstance(canvas, config, function (progress) {
+        var pct = Math.round(progress * 100);
+        progressBarFull.style.width = pct + "%";
+        progressText.textContent = "Loading " + pct + "%";
+      }).then(function (unityInstance) {
+        loadingBar.style.display = "none";
+        fullscreenButton.disabled = false;
+        fullscreenButton.addEventListener("click", function () {
+          unityInstance.SetFullscreen(1);
+        });
+      }).catch(function (message) {
+        showError();
+        if (window.console) console.error(message);
+      });
+    };
+    script.onerror = showError;
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>
