@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>City Game</title>
+  <title>Chronopolis</title>
   <meta name="description" content="A 2D isometric city-builder made in Unity, playable in the browser via WebGL." />
   <style>
     :root {
@@ -39,13 +39,20 @@
     .back:hover { text-decoration: underline; }
 
     .logo {
+      display: grid;
+      place-items: center;
+      margin-bottom: 1.75rem;
+    }
+    .logo img {
+      display: block;
+      width: 100%;
+      max-width: 360px;
+      height: auto;
       border: 1px solid var(--border);
       border-radius: 16px;
-      overflow: hidden;
       background: var(--panel);
       box-shadow: 0 20px 50px -24px rgba(0, 0, 0, 0.8);
     }
-    .logo img { display: block; width: 100%; height: auto; }
 
     h1 {
       font-size: clamp(2rem, 6vw, 3rem);
@@ -121,10 +128,10 @@
     <a class="back" href="../../index.html">&larr; All projects</a>
 
     <div class="logo">
-      <img src="assets/logo.svg" alt="City Game logo" />
+      <img src="assets/logo.png" alt="Chronopolis logo" />
     </div>
 
-    <h1>City Game</h1>
+    <h1>Chronopolis</h1>
 
     <div class="meta">
       <span class="badge">Prototype</span>
@@ -159,7 +166,7 @@
 
     <p class="note">
       Runs entirely in the browser via WebGL — no download required. Replace the logo at
-      <code>assets/logo.svg</code> and update the Itch.io link in this file when it goes live.
+      <code>assets/logo.png</code> and update the Itch.io link in this file when it goes live.
     </p>
   </div>
 </body>

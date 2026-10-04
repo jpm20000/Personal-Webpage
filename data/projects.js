@@ -30,11 +30,11 @@ window.PROJECTS = [
   },
   {
     slug: "city-game",
-    title: "City Game",
+    title: "Chronopolis",
     description: "A 2d Isometric City-builder created in Unity, with assistance from Claude Code",
     tags: ["demo", "generative"],
     thumbnail: "",
-    live: "projects/city-game/play",
+    live: "projects/city-game/play/",
     cta: "Play",
     repo: "https://github.com/jpm20000/City-Game/",
     featured: true,

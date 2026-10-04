@@ -39,5 +39,5 @@
 
   <rect x="70" y="236" width="500" height="3" rx="1.5" fill="url(#accent)" opacity="0.6"/>
 
-  <text x="320" y="286" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="6" fill="url(#accent)">CITY GAME</text>
+  <text x="320" y="286" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="6" fill="url(#accent)">CHRONOPOLIS</text>
 </svg>
