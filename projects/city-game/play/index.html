@@ -47,16 +47,15 @@
     #game-wrap {
       position: relative;
       flex: 1;
-      display: grid;
-      place-items: center;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
       padding: 1rem;
       min-height: 0;
     }
     #unity-canvas {
       width: 100%;
-      max-width: 1920px;
-      height: auto;
-      aspect-ratio: 16 / 9;
+      height: 100%;
       background: #000;
       border: 1px solid #1c2030;
       border-radius: 12px;
@@ -192,6 +191,10 @@
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
       config.devicePixelRatio = 1;
     }
+
+    // Keep the WebGL render target matched to the canvas' on-screen size so the game
+    // scales with the browser window instead of rendering at a fixed resolution.
+    config.matchWebGLToCanvasSize = true;
 
     function showError() {
       loadingBar.style.display = "none";
