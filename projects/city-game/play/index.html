@@ -3,15 +3,55 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chronopolis ÔÇö Play</title>
+  <title>Chronopolis — Play</title>
+  <meta name="color-scheme" content="light dark" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
   <style>
-    :root { color-scheme: dark; }
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7fb;
+      --fg: #111420;
+      --muted: #606680;
+      --border: #dfe2ec;
+      --accent: #4f46e5;
+      --accent-2: #0e9dd6;
+      --bar-bg: rgba(246, 247, 251, 0.9);
+      --btn-bg: #ffffff;
+      --btn-border: #c7cad6;
+      --track: #e4e6ee;
+      --panel: #ffffff;
+      --code-bg: #f1f2f8;
+      --code-fg: #4338ca;
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e16;
+      --fg: #e7eaf3;
+      --muted: #949bb4;
+      --border: #1c2030;
+      --accent: #818cf8;
+      --accent-2: #22d3ee;
+      --bar-bg: rgba(11, 14, 22, 0.9);
+      --btn-bg: #1a1e2b;
+      --btn-border: #2a2e3e;
+      --track: #1c2030;
+      --panel: #0f1220;
+      --code-bg: #1a1e2b;
+      --code-fg: #c7d2fe;
+    }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
       margin: 0;
-      background: #0b0e16;
-      color: #e7eaf3;
+      background: var(--bg);
+      color: var(--fg);
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       display: flex;
       flex-direction: column;
@@ -22,13 +62,13 @@
       align-items: center;
       gap: 1rem;
       padding: 0.75rem 1rem;
-      border-bottom: 1px solid #1c2030;
-      background: rgba(11, 14, 22, 0.9);
+      border-bottom: 1px solid var(--border);
+      background: var(--bar-bg);
       backdrop-filter: blur(8px);
     }
     header.bar .title { font-weight: 700; }
     header.bar .spacer { margin-left: auto; }
-    header.bar a { color: #818cf8; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+    header.bar a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
     header.bar a:hover { text-decoration: underline; }
     header.bar button {
       font: inherit;
@@ -37,11 +77,11 @@
       cursor: pointer;
       padding: 0.45rem 0.9rem;
       border-radius: 999px;
-      border: 1px solid #2a2e3e;
-      background: #1a1e2b;
-      color: #e7eaf3;
+      border: 1px solid var(--btn-border);
+      background: var(--btn-bg);
+      color: var(--fg);
     }
-    header.bar button:hover { border-color: #818cf8; }
+    header.bar button:hover { border-color: var(--accent); }
     header.bar button:disabled { opacity: 0.5; cursor: default; }
 
     #game-wrap {
@@ -57,7 +97,7 @@
       width: 100%;
       height: 100%;
       background: #000;
-      border: 1px solid #1c2030;
+      border: 1px solid var(--border);
       border-radius: 12px;
       display: block;
       outline: none;
@@ -78,8 +118,8 @@
       width: 42px;
       height: 42px;
       border-radius: 50%;
-      border: 3px solid #2a2e3e;
-      border-top-color: #818cf8;
+      border: 3px solid var(--btn-border);
+      border-top-color: var(--accent);
       animation: spin 0.9s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -88,16 +128,16 @@
       max-width: 60vw;
       height: 6px;
       border-radius: 999px;
-      background: #1c2030;
+      background: var(--track);
       overflow: hidden;
     }
     #unity-progress-bar-full {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #818cf8, #22d3ee);
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
       transition: width 0.15s ease;
     }
-    #unity-progress-text { font-size: 0.85rem; color: #949bb4; font-variant-numeric: tabular-nums; }
+    #unity-progress-text { font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 
     #unity-error {
       position: absolute;
@@ -109,19 +149,19 @@
     }
     #unity-error .box {
       max-width: 40rem;
-      border: 1px solid #2a2e3e;
+      border: 1px solid var(--btn-border);
       border-radius: 12px;
       padding: 1.5rem;
-      background: #0f1220;
+      background: var(--panel);
     }
     #unity-error h2 { margin: 0 0 0.5rem; font-size: 1.2rem; }
-    #unity-error p { margin: 0.4rem 0; color: #949bb4; line-height: 1.6; }
+    #unity-error p { margin: 0.4rem 0; color: var(--muted); line-height: 1.6; }
     #unity-error code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      background: #1a1e2b;
+      background: var(--code-bg);
       padding: 0.1rem 0.35rem;
       border-radius: 5px;
-      color: #c7d2fe;
+      color: var(--code-fg);
     }
   </style>
 </head>
@@ -224,5 +264,6 @@
     loaderScript.onerror = showError;
     document.body.appendChild(loaderScript);
   </script>
+  <script src="../../../assets/js/theme.js"></script>
 </body>
 </html>
