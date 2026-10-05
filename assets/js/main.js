@@ -140,7 +140,33 @@
     var list = projects.filter(function (p) {
       return activeTag === "All" || (p.tags || []).indexOf(activeTag) >= 0;
     });
-    list.forEach(function (p) { grid.appendChild(makeCard(p)); });
+
+    var groups = [];
+    var byName = {};
+    list.forEach(function (p) {
+      var name = (p.category || "Other").trim() || "Other";
+      if (!byName[name]) { byName[name] = []; groups.push(name); }
+      byName[name].push(p);
+    });
+    groups.sort(function (a, b) { return a.localeCompare(b); });
+
+    groups.forEach(function (name) {
+      var section = document.createElement("div");
+      section.className = "project-group";
+
+      var h3 = document.createElement("h3");
+      h3.className = "group-title";
+      h3.textContent = name;
+      section.appendChild(h3);
+
+      var groupGrid = document.createElement("div");
+      groupGrid.className = "grid";
+      byName[name].forEach(function (p) { groupGrid.appendChild(makeCard(p)); });
+      section.appendChild(groupGrid);
+
+      grid.appendChild(section);
+    });
+
     if (emptyEl) emptyEl.hidden = list.length !== 0;
     if (countEl) countEl.textContent = list.length + (list.length === 1 ? " project" : " projects");
   }

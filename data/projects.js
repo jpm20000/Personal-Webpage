@@ -5,6 +5,8 @@
      slug        (required) unique id; also the folder name under /projects/
      title       (required) card + link text
      description (required) short summary
+     category    grouping for the home-page sections, e.g. "Games", "Automation"
+                 projects sharing a category render under one heading
      tags        array of strings, used for the filter chips
      thumbnail   image path, e.g. "assets/img/my-project.png"
                  leave "" to show a coloured placeholder with the initial
@@ -22,6 +24,7 @@ window.PROJECTS = [
     slug: "example-app",
     title: "Example App",
     description: "A placeholder live app that shows how projects are wired up. Replace it with your own.",
+    category: "Automation",
     tags: ["demo", "javascript"],
     thumbnail: "",
     live: "projects/example-app/",
@@ -33,6 +36,7 @@ window.PROJECTS = [
     slug: "city-game",
     title: "Chronopolis",
     description: "A 2d Isometric City-builder created in Unity, with assistance from Claude Code",
+    category: "Games",
     tags: ["demo", "generative"],
     thumbnail: "projects/city-game/assets/logo.png",
     thumbnailFit: "contain",
@@ -47,6 +51,7 @@ window.PROJECTS = [
     slug: "automata-lab",
     title: "Cellular Automata Lab",
     description: "Playing with grid rules and emergent behaviour.",
+    category: "Experiments",
     tags: ["canvas", "generative"],
     thumbnail: "",
     live: "",
