@@ -4,19 +4,44 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Example App</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
   <style>
-    :root { color-scheme: light dark; }
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7fb;
+      --fg: #111420;
+      --muted: #606680;
+      --btn-bg: #4f46e5;
+      --btn-fg: #ffffff;
+      --btn-border: #c7cad6;
+    }
+    [data-theme="dark"] {
+      --bg: #0b0e16;
+      --fg: #e7eaf3;
+      --muted: #949bb4;
+      --btn-bg: #818cf8;
+      --btn-fg: #0b0e16;
+      --btn-border: #2a2e3e;
+    }
     * { box-sizing: border-box; }
     body {
       margin: 0; min-height: 100vh;
       display: grid; place-items: center;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: #0b0e16; color: #e7eaf3;
+      background: var(--bg); color: var(--fg);
       padding: 2rem;
     }
     main { max-width: 34rem; text-align: center; }
     h1 { font-size: 1.8rem; margin: 0 0 0.5rem; }
-    p { color: #949bb4; line-height: 1.6; }
+    p { color: var(--muted); line-height: 1.6; }
     .counter {
       font-size: 3.5rem; font-weight: 800; margin: 1.5rem 0;
       font-variant-numeric: tabular-nums;
@@ -24,10 +49,10 @@
     button {
       font: inherit; font-weight: 600; cursor: pointer;
       padding: 0.6rem 1.2rem; border-radius: 999px;
-      border: 1px solid #2a2e3e; background: #818cf8; color: #0b0e16;
+      border: 1px solid var(--btn-border); background: var(--btn-bg); color: var(--btn-fg);
     }
     button:hover { filter: brightness(1.08); }
-    a.back { color: #818cf8; display: inline-block; margin-top: 2rem; }
+    a.back { color: var(--btn-bg); display: inline-block; margin-top: 2rem; }
   </style>
 </head>
 <body>
@@ -52,5 +77,6 @@
       out.textContent = String(++n);
     });
   </script>
+  <script src="../../assets/js/theme.js"></script>
 </body>
 </html>

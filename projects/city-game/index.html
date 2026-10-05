@@ -5,8 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chronopolis</title>
   <meta name="description" content="A 2D isometric city-builder made in Unity, playable in the browser via WebGL." />
+  <meta name="color-scheme" content="light dark" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
   <style>
     :root {
+      color-scheme: light dark;
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --border: #dfe2ec;
+      --fg: #111420;
+      --muted: #606680;
+      --accent: #4f46e5;
+      --accent-2: #0e9dd6;
+      --tag-bg: #f1f2f8;
+      --tag-fg: #4a5070;
+      --ghost-bg: rgba(17, 20, 32, 0.03);
+      --body-glow: rgba(79, 70, 229, 0.14);
+      --logo-shadow: 0 20px 50px -24px rgba(15, 20, 40, 0.35);
+      --code-fg: #4338ca;
+      --desc-fg: #3a4056;
+    }
+    [data-theme="dark"] {
       --bg: #0b0e16;
       --panel: #0f1220;
       --border: #1c2030;
@@ -14,13 +41,20 @@
       --muted: #949bb4;
       --accent: #818cf8;
       --accent-2: #22d3ee;
+      --tag-bg: #15192a;
+      --tag-fg: #949bb4;
+      --ghost-bg: rgba(255, 255, 255, 0.03);
+      --body-glow: rgba(129, 140, 248, 0.16);
+      --logo-shadow: 0 20px 50px -24px rgba(0, 0, 0, 0.8);
+      --code-fg: #c7d2fe;
+      --desc-fg: #cdd3e4;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(900px 500px at 50% -10%, rgba(129, 140, 248, 0.16), transparent 70%),
+        radial-gradient(900px 500px at 50% -10%, var(--body-glow), transparent 70%),
         var(--bg);
       color: var(--fg);
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -51,7 +85,7 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       background: var(--panel);
-      box-shadow: 0 20px 50px -24px rgba(0, 0, 0, 0.8);
+      box-shadow: var(--logo-shadow);
     }
 
     h1 {
@@ -78,12 +112,12 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       padding: 0.2rem 0.55rem;
       border-radius: 6px;
-      background: #15192a;
+      background: var(--tag-bg);
       border: 1px solid var(--border);
-      color: var(--muted);
+      color: var(--tag-fg);
     }
 
-    .desc p { margin: 0 0 1rem; color: #cdd3e4; }
+    .desc p { margin: 0 0 1rem; color: var(--desc-fg); }
     .desc p.lead { font-size: 1.12rem; color: var(--fg); }
 
     .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1.75rem 0 1rem; }
@@ -100,7 +134,7 @@
     }
     .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0b0e16; }
     .btn-primary:hover { filter: brightness(1.07); text-decoration: none; }
-    .btn-ghost { background: rgba(255, 255, 255, 0.03); color: var(--fg); border-color: var(--border); }
+    .btn-ghost { background: var(--ghost-bg); color: var(--fg); border-color: var(--border); }
     .btn-ghost:hover { border-color: var(--accent); text-decoration: none; }
     .btn .soon {
       font-size: 0.62rem;
@@ -116,10 +150,10 @@
     .note { color: var(--muted); font-size: 0.88rem; margin-top: 1rem; }
     .note code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      background: #15192a;
+      background: var(--tag-bg);
       padding: 0.1rem 0.35rem;
       border-radius: 5px;
-      color: #c7d2fe;
+      color: var(--code-fg);
     }
   </style>
 </head>
@@ -170,5 +204,7 @@
       <code>assets/logo.png</code> and update the Itch.io link in this file when it goes live.
     </p>
   </div>
+
+  <script src="../../assets/js/theme.js"></script>
 </body>
 </html>
