@@ -39,6 +39,7 @@
       img.src = p.thumbnail;
       img.alt = (p.title || "Project") + " preview";
       img.loading = "lazy";
+      if (p.thumbnailFit === "contain") img.className = "fit-contain";
       media.appendChild(img);
     } else {
       media.textContent = (p.title || "?").trim().charAt(0).toUpperCase();
