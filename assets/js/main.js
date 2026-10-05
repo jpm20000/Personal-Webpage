@@ -8,6 +8,7 @@
   var featuredGrid = document.getElementById("featured-grid");
   var grid = document.getElementById("projects-grid");
   var filterBar = document.getElementById("tag-filter");
+  var categoryBar = document.getElementById("category-filter");
   var emptyEl = document.getElementById("empty-state");
   var countEl = document.getElementById("project-count");
   var yearEl = document.getElementById("year");
@@ -15,6 +16,7 @@
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
   var activeTag = "All";
+  var activeCategory = "All";
   var STATUS_LABELS = { wip: "WIP", prototype: "Prototype", archived: "Archived", active: "" };
 
   function linkEl(href, text, external) {
@@ -113,24 +115,39 @@
     return Object.keys(seen).sort();
   }
 
-  function renderFilters() {
-    if (!filterBar) return;
-    var tags = ["All"].concat(allTags());
-    filterBar.innerHTML = "";
-    if (tags.length <= 2) return;
+  function allCategories() {
+    var seen = {};
+    projects.forEach(function (p) {
+      var c = (p.category || "Other").trim() || "Other";
+      seen[c] = true;
+    });
+    return Object.keys(seen).sort();
+  }
 
-    tags.forEach(function (tag) {
+  function renderChips(bar, values, active, onPick) {
+    if (!bar) return;
+    bar.innerHTML = "";
+    values.forEach(function (value) {
       var b = document.createElement("button");
       b.type = "button";
-      b.className = "chip" + (tag === activeTag ? " is-active" : "");
-      b.textContent = tag;
-      b.setAttribute("aria-pressed", tag === activeTag ? "true" : "false");
-      b.addEventListener("click", function () {
-        activeTag = tag;
-        renderFilters();
-        renderGrid();
-      });
-      filterBar.appendChild(b);
+      b.className = "chip" + (value === active ? " is-active" : "");
+      b.textContent = value;
+      b.setAttribute("aria-pressed", value === active ? "true" : "false");
+      b.addEventListener("click", function () { onPick(value); });
+      bar.appendChild(b);
+    });
+  }
+
+  function renderFilters() {
+    renderChips(categoryBar, ["All"].concat(allCategories()), activeCategory, function (value) {
+      activeCategory = value;
+      renderFilters();
+      renderGrid();
+    });
+    renderChips(filterBar, ["All"].concat(allTags()), activeTag, function (value) {
+      activeTag = value;
+      renderFilters();
+      renderGrid();
     });
   }
 
@@ -138,35 +155,11 @@
     if (!grid) return;
     grid.innerHTML = "";
     var list = projects.filter(function (p) {
+      var cat = (p.category || "Other").trim() || "Other";
+      if (activeCategory !== "All" && cat !== activeCategory) return false;
       return activeTag === "All" || (p.tags || []).indexOf(activeTag) >= 0;
     });
-
-    var groups = [];
-    var byName = {};
-    list.forEach(function (p) {
-      var name = (p.category || "Other").trim() || "Other";
-      if (!byName[name]) { byName[name] = []; groups.push(name); }
-      byName[name].push(p);
-    });
-    groups.sort(function (a, b) { return a.localeCompare(b); });
-
-    groups.forEach(function (name) {
-      var section = document.createElement("div");
-      section.className = "project-group";
-
-      var h3 = document.createElement("h3");
-      h3.className = "group-title";
-      h3.textContent = name;
-      section.appendChild(h3);
-
-      var groupGrid = document.createElement("div");
-      groupGrid.className = "grid";
-      byName[name].forEach(function (p) { groupGrid.appendChild(makeCard(p)); });
-      section.appendChild(groupGrid);
-
-      grid.appendChild(section);
-    });
-
+    list.forEach(function (p) { grid.appendChild(makeCard(p)); });
     if (emptyEl) emptyEl.hidden = list.length !== 0;
     if (countEl) countEl.textContent = list.length + (list.length === 1 ? " project" : " projects");
   }
