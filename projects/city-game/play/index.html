@@ -208,12 +208,13 @@
     var BUILD_NAME = "Chronopolis web";
     var BUILD_DIR = "Build";
     var EXT = ".unityweb"; // Unity's uncompressed build extension (no server headers needed)
+    var BUILD_VERSION = "2026-10-06"; // bump when you replace the build to bypass cached files
 
-    var loaderUrl = BUILD_DIR + "/" + BUILD_NAME + ".loader.js";
+    var loaderUrl = BUILD_DIR + "/" + BUILD_NAME + ".loader.js?v=" + BUILD_VERSION;
     var config = {
-      dataUrl: BUILD_DIR + "/" + BUILD_NAME + ".data" + EXT,
-      frameworkUrl: BUILD_DIR + "/" + BUILD_NAME + ".framework.js" + EXT,
-      codeUrl: BUILD_DIR + "/" + BUILD_NAME + ".wasm" + EXT,
+      dataUrl: BUILD_DIR + "/" + BUILD_NAME + ".data" + EXT + "?v=" + BUILD_VERSION,
+      frameworkUrl: BUILD_DIR + "/" + BUILD_NAME + ".framework.js" + EXT + "?v=" + BUILD_VERSION,
+      codeUrl: BUILD_DIR + "/" + BUILD_NAME + ".wasm" + EXT + "?v=" + BUILD_VERSION,
       streamingAssetsUrl: "StreamingAssets",
       companyName: "J-man Studios",
       productName: "Chronopolis",
